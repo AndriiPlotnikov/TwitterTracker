@@ -1,14 +1,23 @@
 package dev.aplotnikov.listener;
 
 import dev.aplotnikov.tracker.EvenOddStatisticsTracker;
+import dev.aplotnikov.tracker.Tracker;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import twitter4j.*;
+import twitter4j.StallWarning;
+import twitter4j.Status;
+import twitter4j.StatusAdapter;
 
+import javax.annotation.Resource;
+
+/**
+ * Feed listener that counts words in viewed Statuses
+ */
 @Component
 @Slf4j
-public class FeedListener extends StatusAdapter {
+public class WordCountFeedListener extends StatusAdapter {
 
     private static final String WHITESPACE_REGEX = "\\s+";
 
@@ -41,6 +50,6 @@ public class FeedListener extends StatusAdapter {
 
     @Override
     public void onException(Exception e) {
-        log.error("ERROR " + e);
+        log.error("ERROR! ", e);
     }
 }

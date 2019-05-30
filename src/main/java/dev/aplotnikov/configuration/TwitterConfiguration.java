@@ -15,6 +15,13 @@ import twitter4j.conf.ConfigurationBuilder;
 @org.springframework.context.annotation.Configuration
 public class TwitterConfiguration {
 
+    /**
+     * Bean for {@link Twitter} creation
+     *
+     * @param configurationBuilder configuration builder
+     * @param twitterProperties properties related to twitter
+     * @return Bean for {@link Twitter}
+     */
     @Bean
     public Twitter twitter(ConfigurationBuilder configurationBuilder, TwitterProperties twitterProperties) {
         Configuration configuration = configurationBuilder.build();
@@ -22,6 +29,13 @@ public class TwitterConfiguration {
         return twitterFactory.getInstance();
     }
 
+    /**
+     * Bean for {@link TwitterStream}
+     *
+     * @param configurationBuilder configuration builder
+     * @param twitterProperties properties related to twitter
+     * @return Bean for {@link TwitterStream}
+     */
     @Bean
     public TwitterStream twitterStream(ConfigurationBuilder configurationBuilder, TwitterProperties twitterProperties) {
         Configuration configuration = configurationBuilder.build();
@@ -29,6 +43,12 @@ public class TwitterConfiguration {
         return twitterStreamFactory.getInstance();
     }
 
+    /**
+     * Create configuration for connection bean
+     *
+     * @param twitterProperties properties related to twitter
+     * @return configuration for connection
+     */
     @Bean
     @Scope("prototype")
     public ConfigurationBuilder configurationBuilder(TwitterProperties twitterProperties) {

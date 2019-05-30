@@ -1,7 +1,12 @@
 package dev.aplotnikov.service;
 
-import org.springframework.scheduling.annotation.Scheduled;
-
+/**
+ * Service for outputing statistics
+ */
 public interface OutputService {
-    void printStatistics();
+
+    /**
+     * Output statistics to bound output of implementation
+     */
+    void outputStatistics();
 }

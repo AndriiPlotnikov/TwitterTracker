@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 /**
- * default implementation {@link OutputService}
+ * default implementation {@link OutputService}. Uses Slf4j to output statistics
  */
 @Service
 @Slf4j
@@ -18,7 +18,7 @@ public class OutputServiceImpl implements OutputService {
 
     @Override
     @Scheduled(fixedRateString = "${fixedRateMs}")
-    public void printStatistics() {
+    public void outputStatistics() {
         log.info(statisticsTracker.getStatistics());
     }
 }

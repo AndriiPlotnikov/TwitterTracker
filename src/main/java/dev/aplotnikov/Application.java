@@ -1,13 +1,15 @@
 package dev.aplotnikov;
 
-import dev.aplotnikov.listener.FeedListener;
-import org.apache.commons.lang3.ArrayUtils;
+import dev.aplotnikov.configuration.TwitterLocation;
+import dev.aplotnikov.configuration.TwitterProperties;
+import dev.aplotnikov.listener.WordCountFeedListener;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import twitter4j.*;
+import twitter4j.FilterQuery;
+import twitter4j.TwitterStream;
 
 import javax.annotation.PostConstruct;
 
@@ -16,39 +18,33 @@ import javax.annotation.PostConstruct;
  */
 @SpringBootApplication
 @EnableScheduling
+@Slf4j
 public class Application {
 
     @Autowired
     private TwitterStream twitterStream;
 
     @Autowired
-    private FeedListener feedListener;
+    private WordCountFeedListener feedListener;
 
-    @Value("#{'${track}'.split(',')}")
-    private String[] track;
-
-    @Value("${twitter.language}")
-    private String language;
+    @Autowired
+    private TwitterProperties twitterProperties;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
     @PostConstruct
-    public void test(){
-        System.out.println("Starting");
+    public void filterFeed() {
+        log.debug("Creating filter");
         twitterStream.addListener(feedListener);
-        System.out.println("Sampling");
         FilterQuery filterQuery = new FilterQuery();
-        filterQuery.track(track);
+        filterQuery.track(twitterProperties.getTrack());
 
-        double[][] newYorkLocation = {{-74.93, 40.23},{-73.43, 41.23}}; //40.730610, -73.935242.
-        double[][] chicagoLocation = {{-88.22, 41.38},{-87.22, 42.38}}; //41.881832, -87.623177
-        double[][] sanFranciscoLocation = {{-122.75,36.8},{-121.75,37.8}}; //37.773972, -122.431297.
-        double[][] locations = ArrayUtils.addAll(newYorkLocation, chicagoLocation);
-        locations = ArrayUtils.addAll(locations, sanFranciscoLocation);
-        filterQuery.locations(locations);
-        filterQuery.language(language);
+        filterQuery.locations(TwitterLocation.getAllLocationsByName(twitterProperties.getLocations()));
+        filterQuery.language(twitterProperties.getLanguage());
+
+        log.debug("Parsing feed");
 
         // filter expects at least one parameter: follow, track, or locations
         twitterStream.filter(filterQuery);
